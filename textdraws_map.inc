@@ -174,6 +174,21 @@ fn Textdraw::Selectable(clientid, const key[], bool:selectable){
 	return 0;
 }
 
+fn Textdraw::Destroy(clientid, const key[]){
+	new index_ = list_find_str(
+		GetListKeys(clientid), key
+	);
+	if(index_ != -1){
+		new TextdrawInfo[e_player_textdraw];
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
+		list_remove(GetTextdrawList(clientid), index_);
+		list_remove(GetListKeys(clientid), index_);
+		PlayerTextDrawDestroy(clientid, TextdrawInfo[ID]);
+		return 1;
+	}
+	return 0;
+}
+
 fn Textdraw::Show(clientid, const key[]){
 	new index_ = list_find_str(
 		GetListKeys(clientid), key
@@ -182,6 +197,19 @@ fn Textdraw::Show(clientid, const key[]){
 		new TextdrawInfo[e_player_textdraw];
 		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		PlayerTextDrawShow(clientid, TextdrawInfo[ID]);
+		return 1;
+	}
+	return 0;
+}
+
+fn Textdraw::Hide(clientid, const key[]){
+	new index_ = list_find_str(
+		GetListKeys(clientid), key
+	);
+	if(index_ != -1){
+		new TextdrawInfo[e_player_textdraw];
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
+		PlayerTextDrawHide(clientid, TextdrawInfo[ID]);
 		return 1;
 	}
 	return 0;
