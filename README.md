@@ -18,3 +18,12 @@ hook OnPlayerConnect(clientid){
 - Ahorro de memoria en el .amx por el tema de los 'MAX_PLAYERS'
 - Ahorro de tiempo de compilacion
 - La identificacion del textdraw será mediante string 'const key[]', no sera mediante una ID como se hacia anteriormente.
+# Nota
+- Reemplazar las siguientes variables y agregarlas a las suyas, esto es opcional, pero no es recomendable tener tantas variables con 'MAX_PLAYERS'
+```c++
+enum e_info{
+	List:Textdraws,
+	List:TextdrawsKeys
+};
+new PlayerInfo[MAX_PLAYERS][e_info];
+```
