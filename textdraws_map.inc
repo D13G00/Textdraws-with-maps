@@ -1,8 +1,12 @@
 #define Textdraw:: td_
-#define fn
+#define fn stock
+
+#if !defined _PawnPlus_included
+	#error PawnPlus not included.
+#endif
 
 enum e_player_textdraw{
-	PlayerText:ID, Float:X, Float:Y, 
+	PlayerText:ID, Float:X__, Float:Y__, 
 	Float:TextSizeX, Float:TextSizeY,
 	Alignment, Color, Shadow,
 	BackgroundColor, Font,
@@ -24,7 +28,7 @@ fn List: GetTextdrawList(clientid){
 	return PlayerInfo[clientid][Textdraws];
 }
 
-fn Textdraw::Create(clientid, Float:x, Float:y, const text[], const key[]){
+fn Textdraw::Create(clientid, Float:x_, Float:y_, const text[], const key[]){
 	new 
 		TextdrawInfo[e_player_textdraw];
 	if(!list_valid(PlayerInfo[clientid][Textdraws])){
@@ -33,48 +37,46 @@ fn Textdraw::Create(clientid, Float:x, Float:y, const text[], const key[]){
 	}
 	new 
 		td_size = list_size(PlayerInfo[clientid][Textdraws]);
-	TextdrawInfo[X] = x, TextdrawInfo[Y] = y;
+	TextdrawInfo[X__] = x_, TextdrawInfo[Y__] = y_;
 
 	format(TextdrawInfo[Text], 256, "%s", text);
 	format(TextdrawInfo[Key], 256, "%s", key);
 
-	TextdrawInfo[ID] = CreatePlayerTextDraw(clientid, x, y, text);
+	TextdrawInfo[ID] = CreatePlayerTextDraw(clientid, x_, y_, text);
 	list_add_arr(PlayerInfo[clientid][Textdraws], TextdrawInfo, td_size);
 	list_add_str(PlayerInfo[clientid][TextdrawsKeys], key, td_size);
 
-	new index = list_find_str(
+	new index_ = list_find_str(
 		GetListKeys(clientid), key
 	);
-	printf("find create %d %s %s tdid %d", 
-	index, key, TextdrawInfo[Key], _:TextdrawInfo[ID]);
 	return 1;
 }
 
-fn Textdraw::TextSize(clientid, const key[], Float:x, Float:y){
-	new index = list_find_str(
+fn Textdraw::TextSize(clientid, const key[], Float:x_, Float:y_){
+	new index_ = list_find_str(
 		GetListKeys(clientid), key
 	);
-	if(index != -1){
+	if(index_ != -1){
 		new TextdrawInfo[e_player_textdraw];
-		list_get_arr(GetTextdrawList(clientid), index, TextdrawInfo);
-		TextdrawInfo[TextSizeX] = x;
-		TextdrawInfo[TextSizeY] = y;
-		list_set_arr(GetTextdrawList(clientid), index, TextdrawInfo);
-		PlayerTextDrawTextSize(clientid, TextdrawInfo[ID], x, y);
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
+		TextdrawInfo[TextSizeX] = x_;
+		TextdrawInfo[TextSizeY] = y_;
+		list_set_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
+		PlayerTextDrawTextSize(clientid, TextdrawInfo[ID], x_, y_);
 		return 1;
 	}
 	return 0;
 }
 
 fn Textdraw::Alignment(clientid, const key[], alignment){
-	new index = list_find_str(
+	new index_ = list_find_str(
 		GetListKeys(clientid), key
 	);
-	if(index != -1){
+	if(index_ != -1){
 		new TextdrawInfo[e_player_textdraw];
-		list_get_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		TextdrawInfo[Alignment] = alignment;
-		list_set_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_set_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		PlayerTextDrawAlignment(clientid, TextdrawInfo[ID], alignment);
 		return 1;
 	}
@@ -82,14 +84,14 @@ fn Textdraw::Alignment(clientid, const key[], alignment){
 }
 
 fn Textdraw::Color(clientid, const key[], color){
-	new index = list_find_str(
+	new index_ = list_find_str(
 		GetListKeys(clientid), key
 	);
-	if(index != -1){
+	if(index_ != -1){
 		new TextdrawInfo[e_player_textdraw];
-		list_get_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		TextdrawInfo[Color] = color;
-		list_set_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_set_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		PlayerTextDrawColor(clientid, TextdrawInfo[ID], color);
 		return 1;
 	}
@@ -98,14 +100,14 @@ fn Textdraw::Color(clientid, const key[], color){
 
 
 fn Textdraw::Shadow(clientid, const key[], shadow){
-	new index = list_find_str(
+	new index_ = list_find_str(
 		GetListKeys(clientid), key
 	);
-	if(index != -1){
+	if(index_ != -1){
 		new TextdrawInfo[e_player_textdraw];
-		list_get_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		TextdrawInfo[Shadow] = shadow;
-		list_set_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_set_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		PlayerTextDrawSetShadow(clientid, TextdrawInfo[ID], shadow);
 		return 1;
 	}
@@ -113,14 +115,14 @@ fn Textdraw::Shadow(clientid, const key[], shadow){
 }
 
 fn Textdraw::BackgroundColor(clientid, const key[], color){
-	new index = list_find_str(
+	new index_ = list_find_str(
 		GetListKeys(clientid), key
 	);
-	if(index != -1){
+	if(index_ != -1){
 		new TextdrawInfo[e_player_textdraw];
-		list_get_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		TextdrawInfo[BackgroundColor] = color;
-		list_set_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_set_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		PlayerTextDrawBackgroundColor(clientid, TextdrawInfo[ID], color);
 		return 1;
 	}
@@ -128,14 +130,14 @@ fn Textdraw::BackgroundColor(clientid, const key[], color){
 }
 
 fn Textdraw::Font(clientid, const key[], font){
-	new index = list_find_str(
+	new index_ = list_find_str(
 		GetListKeys(clientid), key
 	);
-	if(index != -1){
+	if(index_ != -1){
 		new TextdrawInfo[e_player_textdraw];
-		list_get_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		TextdrawInfo[Font] = font;
-		list_set_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_set_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		PlayerTextDrawFont(clientid, TextdrawInfo[ID], font);
 		return 1;
 	}
@@ -143,14 +145,14 @@ fn Textdraw::Font(clientid, const key[], font){
 }
 
 fn Textdraw::Proportional(clientid, const key[], proportional){
-	new index = list_find_str(
+	new index_ = list_find_str(
 		GetListKeys(clientid), key
 	);
-	if(index != -1){
+	if(index_ != -1){
 		new TextdrawInfo[e_player_textdraw];
-		list_get_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		TextdrawInfo[Proportional] = proportional;
-		list_set_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_set_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		PlayerTextDrawSetProportional(clientid, TextdrawInfo[ID], proportional);
 		return 1;
 	}
@@ -158,14 +160,14 @@ fn Textdraw::Proportional(clientid, const key[], proportional){
 }
 
 fn Textdraw::Selectable(clientid, const key[], bool:selectable){
-	new index = list_find_str(
+	new index_ = list_find_str(
 		GetListKeys(clientid), key
 	);
-	if(index != -1){
+	if(index_ != -1){
 		new TextdrawInfo[e_player_textdraw];
-		list_get_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		TextdrawInfo[Selectable] = selectable;
-		list_set_arr(GetTextdrawList(clientid), index, TextdrawInfo);
+		list_set_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		PlayerTextDrawSetSelectable(clientid, TextdrawInfo[ID], selectable);
 		return 1;
 	}
@@ -173,13 +175,12 @@ fn Textdraw::Selectable(clientid, const key[], bool:selectable){
 }
 
 fn Textdraw::Show(clientid, const key[]){
-	new index = list_find_str(
+	new index_ = list_find_str(
 		GetListKeys(clientid), key
 	);
-	if(index != -1){
+	if(index_ != -1){
 		new TextdrawInfo[e_player_textdraw];
-		list_get_arr(GetTextdrawList(clientid), index, TextdrawInfo);
-		printf("find %d %s tdid %d", index, key, _:TextdrawInfo[ID]);
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
 		PlayerTextDrawShow(clientid, TextdrawInfo[ID]);
 		return 1;
 	}
