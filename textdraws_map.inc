@@ -8,6 +8,7 @@
 enum e_player_textdraw{
 	PlayerText:ID, Float:X__, Float:Y__, 
 	Float:TextSizeX, Float:TextSizeY,
+	Float:LetterSizeX, Float:LetterSizeY,
 	Alignment, Color, Shadow,
 	BackgroundColor, Font,
 	Proportional, bool:Selectable,
@@ -16,24 +17,30 @@ enum e_player_textdraw{
 
 enum e_info{
 	List:Textdraws,
-	List:TextdrawsKeys
+	List:TextdrawsKeys,
+	List:TextdrawsId
 };
 new PlayerInfo[MAX_PLAYERS][e_info];
 
-fn List: GetListKeys(clientid){
+stock fn List: GetListKeys(clientid){
 	return PlayerInfo[clientid][TextdrawsKeys];
 }
 
-fn List: GetTextdrawList(clientid){
+stock fn List: GetTextdrawList(clientid){
 	return PlayerInfo[clientid][Textdraws];
 }
 
-fn Textdraw::Create(clientid, Float:x_, Float:y_, const text[], const key[]){
+stock fn List: GetTextdrawID(clientid){
+	return PlayerInfo[clientid][TextdrawsId];
+}
+
+stock fn Textdraw::Create(clientid, Float:x_, Float:y_, const text[], const key[]){
 	new 
 		TextdrawInfo[e_player_textdraw];
 	if(!list_valid(PlayerInfo[clientid][Textdraws])){
 		PlayerInfo[clientid][Textdraws] = list_new();
 		PlayerInfo[clientid][TextdrawsKeys] = list_new();
+		PlayerInfo[clientid][TextdrawsId] = list_new();
 	}
 	new 
 		td_size = list_size(PlayerInfo[clientid][Textdraws]);
@@ -45,10 +52,7 @@ fn Textdraw::Create(clientid, Float:x_, Float:y_, const text[], const key[]){
 	TextdrawInfo[ID] = CreatePlayerTextDraw(clientid, x_, y_, text);
 	list_add_arr(PlayerInfo[clientid][Textdraws], TextdrawInfo, td_size);
 	list_add_str(PlayerInfo[clientid][TextdrawsKeys], key, td_size);
-
-	new index_ = list_find_str(
-		GetListKeys(clientid), key
-	);
+	list_add(PlayerInfo[clientid][TextdrawsId], _:TextdrawInfo[ID], td_size);
 	return 1;
 }
 
@@ -189,9 +193,26 @@ fn Textdraw::Destroy(clientid, const key[]){
 	return 0;
 }
 
-fn Textdraw::Show(clientid, const key[]){
+stock fn Textdraw::String(clientid, const key[], const string[], va_args<>){
+	new out[512];
+	va_format(out, sizeof out, string, va_start<3>);
 	new index_ = list_find_str(
-		GetListKeys(clientid), key
+		GetListKeys(clientid), out
+	);
+	if(index_ != -1){
+		new TextdrawInfo[e_player_textdraw];
+		list_get_arr(GetTextdrawList(clientid), index_, TextdrawInfo);
+		PlayerTextDrawSetString(clientid, TextdrawInfo[ID], out);
+		return 1;
+	}
+	return 0;
+}
+
+stock fn Textdraw::Show(clientid, const key[], va_args<>){
+	new out[128];
+	va_format(out, sizeof out, key, va_start<2>);
+	new index_ = list_find_str(
+		GetListKeys(clientid), out
 	);
 	if(index_ != -1){
 		new TextdrawInfo[e_player_textdraw];
@@ -215,8 +236,28 @@ fn Textdraw::Hide(clientid, const key[]){
 	return 0;
 }
 
-public OnPlayerDisconnect(clientid, reason){
-	list_delete(PlayerInfo[clientid][Textdraws]);
-	list_delete(PlayerInfo[clientid][TextdrawsKeys]);
+//OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
+hook OnPlayerClickPlayerTD(clientid, PlayerText:playertextid){
+	new find = -1;
+	if(list_valid(GetTextdrawID(clientid))){
+		find = list_find(GetTextdrawID(clientid), _:playertextid);
+	}
+	if(find != -1){
+		new TextdrawInfo[e_player_textdraw];
+		list_get_arr(GetTextdrawList(clientid), find, TextdrawInfo);
+		if(TextdrawInfo[ID] == playertextid){ 
+			CallLocalFunction("OnClickTextdraw", "ds", clientid, TextdrawInfo[Key]);
+		}
+	}
+	return 1;
+}
+
+hook OnPlayerDisconnect(clientid, reason){
+	if(list_valid(PlayerInfo[clientid][Textdraws]))
+		list_delete(PlayerInfo[clientid][Textdraws]);
+	if(list_valid(PlayerInfo[clientid][TextdrawsKeys]))
+		list_delete(PlayerInfo[clientid][TextdrawsKeys]);
+	if(list_valid(GetTextdrawID(clientid)))
+		list_delete(GetTextdrawID(clientid));
 	return 1;
 }
