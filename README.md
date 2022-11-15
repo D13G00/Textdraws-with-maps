@@ -16,7 +16,7 @@ hook OnPlayerConnect(clientid){
 ```
 # Callback
 ```c++
-hook OnPlayerClickList(clientid, listitem, key[]){
+hook OnClickTextdraw(clientid, key[]){
 	return 1;
 }
 ```
